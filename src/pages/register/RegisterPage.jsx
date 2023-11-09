@@ -4,7 +4,6 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -12,6 +11,7 @@ import Typography from "@mui/material/Typography";
 import axios from "axios";
 import { normalizeData } from "./normalizeData";
 import { validateRegister } from "../../validation/registerValidation";
+import { toast } from "react-toastify";
 
 const RegisterPage = () => {
   const [inputsValue, setInputsValue] = useState({
@@ -30,29 +30,9 @@ const RegisterPage = () => {
     houseNumber: "",
     zip: "",
   });
-
+ const navigate = useNavigate();
   const handleInputsChange = (e) => {
-    //step 1
-    // setInputsValue((currentState) => {
-    //   currentState.firstName = e.target.value;
-    //   let newObject = { ...currentState };
-    //   return newObject;
-    // });
-
-    //step 2
-    // setInputsValue((currentState) => {
-    //   currentState[e.target.id] = e.target.value;
-    //   let newObject = { ...currentState };
-    //   return newObject;
-    // });
-
-    //step 3
-    // setInputsValue((currentState) => ({
-    //   ...currentState,
-    //   firstName: e.target.value,
-    // }));
-
-    //step 4
+   
     setInputsValue((currentState) => ({
       ...currentState,
       [e.target.id]: e.target.value,
@@ -61,15 +41,33 @@ const RegisterPage = () => {
   const handleSubmit = async (event) => {
     try {
       event.preventDefault();
-      // inputsValue.isBusiness = false;
       const errors = validateRegister(inputsValue);
       console.log(errors);
       if (errors) return;
       let request = normalizeData(inputsValue);
       const { data } = await axios.post("/users", request);
-      console.log("data", data);
+      toast("You have successfully registered 👍", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      navigate(ROUTES.LOGIN);
     } catch (err) {
-      console.log(err);
+       toast.error(err.response.data, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     }
   };
 
@@ -273,9 +271,6 @@ const RegisterPage = () => {
         </Button>
         <Grid container justifyContent="flex-end">
           <Grid item>
-            <Link href="#" variant="body2">
-              Already have an account? Sign in
-            </Link>
           </Grid>
         </Grid>
       </Box>
