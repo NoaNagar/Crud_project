@@ -1,25 +1,28 @@
-import React, { useEffect, useState } from "react";
 import { Container, Grid } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import CardComponent from "../../components/CardComponent";
-import { useNavigate } from "react-router-dom";
-import ROUTES from "../../routes/ROUTES";
-import axios from "axios";
-import homePageNormalization from "./homePageNormalization";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import useQueryParams from "../../hooks/useQueryParams";
+import homePageNormalization from "../home/homePageNormalization";
+import axios from "axios";
+import ROUTES from "../../routes/ROUTES";
 import { toast } from "react-toastify";
-// import CircularIndeterminate from "../../components/loading";
 
 let initialDataFromServer = [];
 
-const HomePage = () => {
+const MyCardsPage = () => {
   const [dataFromServer, setDataFromServer] = useState([]);
   const navigate = useNavigate();
   const userData = useSelector((bigPie) => bigPie.authSlice.userData);
-  const query = useQueryParams();
+  const isAdmin = useSelector((bigPie) => bigPie.authSlice.isAdmin);
+  const id = useSelector((bigPie) => bigPie.authSlice.id);
+
   useEffect(() => {
     axios
-      .get("/cards")
+      .get(
+        `https://monkfish-app-z9uza.ondigitalocean.app/bcard2/cards/my-cards/`
+      )
       .then(({ data }) => {
         if (userData) data = homePageNormalization(data, userData._id);
         initialDataFromServer = data;
@@ -38,40 +41,18 @@ const HomePage = () => {
         });
       });
   }, []);
-  useEffect(() => {
-    if (!initialDataFromServer.length) return;
-    const filter = query.filter ? query.filter : "";
-    setDataFromServer(
-      initialDataFromServer.filter((card) => card.title.startsWith(filter))
+  const handleDeleteCard = (_id) => {
+    setDataFromServer((dataFromServerCopy) =>
+      dataFromServerCopy.filter((card) => card._id !== _id)
     );
-  }, [query, initialDataFromServer]);
-
-  const handleDeleteCard = async (_id) => {
-    try {
-      const { data } = await axios.delete(
-        "https://monkfish-app-z9uza.ondigitalocean.app/bcard2/cards/" + _id
-      );
-    } catch (err) {
-      toast.error(err.response.data, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-      });
-    }
   };
   const handleEditCard = (_id) => {
     navigate(`${ROUTES.EDITCARD}/${_id}`);
   };
 
   return (
-    <Container sx={{ mt: 12 }}>
-      {/* <CircularIndeterminate /> */}
-      <Grid sx={{ mb: 2 }} container spacing={2}>
+    <Container>
+      <Grid sx={{ mt: 10 }} container spacing={2}>
         {dataFromServer.map((card) => (
           <Grid item key={card._id} xs={12} sm={6} md={4} lg={3}>
             <CardComponent
@@ -100,4 +81,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default MyCardsPage;

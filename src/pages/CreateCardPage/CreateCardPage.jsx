@@ -8,11 +8,13 @@ import {
   Button,
   Paper,
 } from "@mui/material";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import ROUTES from "../../routes/ROUTES";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const CreateCardPage = () => {
+  const navigate = useNavigate();
   const [inputsValue, setInputValue] = useState({
     title: "",
     subtitle: "",
@@ -31,7 +33,6 @@ const CreateCardPage = () => {
     zip: "",
   });
   const { id: _id } = useParams();
-  // console.log(_id);
   const handleInputChange = (e) => {
     setInputValue((currentState) => ({
       ...currentState,
@@ -60,15 +61,24 @@ const CreateCardPage = () => {
           zip: +inputsValue.zip,
         },
       });
-      console.log("data from response", data);
+      navigate(ROUTES.HOME);
     } catch (err) {
-      console.log("err", err.response);
+      toast.error(err.response.data, {
+        position: "top-left",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
   return (
-    <Container sx={{ padding: "50px" }}>
+    <Container sx={{ padding: "65px" }}>
       <Typography variant="h2" sx={{ mb: 1, padding: "10px", pb: "0px" }}>
-        Card - Edit
+        Create Card{" "}
       </Typography>
       <Typography variant="body1" sx={{ mb: 1, padding: "3px", ml: "7px" }}>
         Put a new values in the correct input
@@ -199,36 +209,14 @@ const CreateCardPage = () => {
           value={inputsValue.zip}
         />
       </Grid>
-      <Grid container spacing={2}>
-        <Grid item lg={8} md={8} sm={8} xs>
-          <Button
-            variant="outlined"
-            sx={{ mt: 2, width: "100%", ml: "0%", bgcolor: "lightskyblue" }}
-            onClick={handleUpdateChangesClick}
-          >
-            Update Changes
-          </Button>
-        </Grid>
-        <Grid item xs>
-          <Link to={ROUTES.HOME}>
-            <Button
-              variant="outlined"
-              sx={{
-                mt: 2,
-                width: "100%",
-                ml: "0%",
-                bgcolor: "navy",
-                color: "gray",
-              }}
-            >
-              Discard Changes
-            </Button>
-          </Link>
-        </Grid>
-      </Grid>
-      <Paper elevation={1} variant="elevation">
-        Special thanks to Inon
-      </Paper>
+
+      <Button
+        variant="outlined"
+        sx={{ mt: 2, width: "100%", ml: "0%", bgcolor: "lightskyblue" }}
+        onClick={handleUpdateChangesClick}
+      >
+        Create
+      </Button>
     </Container>
   );
 };

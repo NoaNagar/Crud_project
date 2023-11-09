@@ -1,18 +1,18 @@
-import { useState } from "react";
 import {
-  Container,
-  TextField,
-  Grid,
-  Typography,
-  Divider,
   Button,
-  Paper,
+  Container,
+  Divider,
+  Grid,
+  TextField,
+  Typography,
 } from "@mui/material";
-import { Link, useParams } from "react-router-dom";
-import ROUTES from "../../routes/ROUTES";
 import axios from "axios";
-
+import { useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import ROUTES from "../../routes/ROUTES";
+import { toast } from "react-toastify";
 const EditCardPage = () => {
+  const navigate = useNavigate();
   const [inputsValue, setInputValue] = useState({
     title: "",
     subtitle: "",
@@ -31,7 +31,6 @@ const EditCardPage = () => {
     zip: "",
   });
   const { id: _id } = useParams();
-  // console.log(_id);
   const handleInputChange = (e) => {
     setInputValue((currentState) => ({
       ...currentState,
@@ -40,35 +39,47 @@ const EditCardPage = () => {
   };
   const handleUpdateChangesClick = async () => {
     try {
-      const { data } = await axios.put("/cards/" + _id, {
-        title: inputsValue.title,
-        subtitle: inputsValue.subtitle,
-        description: inputsValue.description,
-        phone: inputsValue.phone,
-        email: inputsValue.mail,
-        web: inputsValue.web,
-        image: {
-          url: inputsValue.url,
-          alt: inputsValue.alt,
-        },
-        address: {
-          state: inputsValue.state,
-          country: inputsValue.country,
-          city: inputsValue.city,
-          street: inputsValue.street,
-          houseNumber: inputsValue.houseNumber,
-          zip: +inputsValue.zip,
-        },
-      });
-      console.log("data from response", data);
+      const { data } = await axios.put(
+        "https://monkfish-app-z9uza.ondigitalocean.app/bcard2/cards/" + _id,
+        {
+          title: inputsValue.title,
+          subtitle: inputsValue.subtitle,
+          description: inputsValue.description,
+          phone: inputsValue.phone,
+          email: inputsValue.mail,
+          web: inputsValue.web,
+          image: {
+            url: inputsValue.url,
+            alt: inputsValue.alt,
+          },
+          address: {
+            state: inputsValue.state,
+            country: inputsValue.country,
+            city: inputsValue.city,
+            street: inputsValue.street,
+            houseNumber: inputsValue.houseNumber,
+            zip: +inputsValue.zip,
+          },
+        }
+      );
+      navigate(ROUTES.HOME);
     } catch (err) {
-      console.log("err", err.response);
+      toast.error(err.response.data, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     }
   };
   return (
-    <Container sx={{ padding: "50px" }}>
+    <Container sx={{ padding: "65px" }}>
       <Typography variant="h2" sx={{ mb: 1, padding: "10px", pb: "0px" }}>
-        Card - Edit
+        Edit Card
       </Typography>
       <Typography variant="body1" sx={{ mb: 1, padding: "3px", ml: "7px" }}>
         Put a new values in the correct input
@@ -128,7 +139,6 @@ const EditCardPage = () => {
           value={inputsValue.mail}
           required
         />
-
         <TextField
           id="url"
           label="Url"
@@ -145,7 +155,6 @@ const EditCardPage = () => {
           onChange={handleInputChange}
           value={inputsValue.alt}
         />
-
         <TextField
           id="state"
           label="State"
@@ -226,9 +235,6 @@ const EditCardPage = () => {
           </Link>
         </Grid>
       </Grid>
-      <Paper elevation={1} variant="elevation">
-        Special thanks to Inon
-      </Paper>
     </Container>
   );
 };

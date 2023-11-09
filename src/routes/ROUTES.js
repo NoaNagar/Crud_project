@@ -4,6 +4,10 @@ const ROUTES = {
   LOGIN: "/login",
   EDITCARD: "/editcard",
   CREATECARD: "/createcard",
-  SANDBOX: "/sandbox",
+  ABOUT: "/about",
+  FAV: "/favorite",
+  MYCARDS: "/mycards",
+  PROFILE: "/myprofile",
+  EDITPROFILE: "/editprofile",
 };
 export default ROUTES;

@@ -12,6 +12,7 @@ import Typography from "@mui/material/Typography";
 import axios from "axios";
 import { normalizeData } from "./normalizeData";
 import { validateRegister } from "../../validation/registerValidation";
+import { toast } from "react-toastify";
 
 const RegisterPage = () => {
   const [inputsValue, setInputsValue] = useState({
@@ -30,29 +31,7 @@ const RegisterPage = () => {
     houseNumber: "",
     zip: "",
   });
-
   const handleInputsChange = (e) => {
-    //step 1
-    // setInputsValue((currentState) => {
-    //   currentState.firstName = e.target.value;
-    //   let newObject = { ...currentState };
-    //   return newObject;
-    // });
-
-    //step 2
-    // setInputsValue((currentState) => {
-    //   currentState[e.target.id] = e.target.value;
-    //   let newObject = { ...currentState };
-    //   return newObject;
-    // });
-
-    //step 3
-    // setInputsValue((currentState) => ({
-    //   ...currentState,
-    //   firstName: e.target.value,
-    // }));
-
-    //step 4
     setInputsValue((currentState) => ({
       ...currentState,
       [e.target.id]: e.target.value,
@@ -61,7 +40,6 @@ const RegisterPage = () => {
   const handleSubmit = async (event) => {
     try {
       event.preventDefault();
-      // inputsValue.isBusiness = false;
       const errors = validateRegister(inputsValue);
       console.log(errors);
       if (errors) return;
@@ -69,14 +47,23 @@ const RegisterPage = () => {
       const { data } = await axios.post("/users", request);
       console.log("data", data);
     } catch (err) {
-      console.log(err);
+      toast.error(err.response.data, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     }
   };
 
   return (
     <Box
       sx={{
-        marginTop: 8,
+        marginTop: 12,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
