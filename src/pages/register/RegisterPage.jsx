@@ -4,7 +4,6 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -31,6 +30,7 @@ const RegisterPage = () => {
     houseNumber: "",
     zip: "",
   });
+  const navigate=useNavigate();
   const handleInputsChange = (e) => {
     setInputsValue((currentState) => ({
       ...currentState,
@@ -45,7 +45,7 @@ const RegisterPage = () => {
       if (errors) return;
       let request = normalizeData(inputsValue);
       const { data } = await axios.post("/users", request);
-      console.log("data", data);
+      navigate(ROUTES.LOGIN);
     } catch (err) {
       toast.error(err.response.data, {
         position: "top-right",
@@ -260,9 +260,6 @@ const RegisterPage = () => {
         </Button>
         <Grid container justifyContent="flex-end">
           <Grid item>
-            <Link href="#" variant="body2">
-              Already have an account? Sign in
-            </Link>
           </Grid>
         </Grid>
       </Box>
